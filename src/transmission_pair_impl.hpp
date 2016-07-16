@@ -171,13 +171,13 @@ void transmission_pair_impl<T>::simulate_fixed(
 					 << "_p0=" << p0 << "_f0=" << f0 << ".txt";
 
 	std::ofstream output(output_file_name.str());
-	output << "p,B";
+	output << "p\tB";
 
 	for (const auto& i : { "XT_", "XI_", "XR_" })
 	{
 		for (uint32_t j = 0; j < K; ++j)
 		{
-			output << ',' << i << j;
+			output << '\t' << i << j;
 		}
 	}
 	output << '\n';
@@ -185,10 +185,10 @@ void transmission_pair_impl<T>::simulate_fixed(
 	data = data_vec.get();
 	for (uint32_t i = 0; i < num_simulations; data += 3 * K, ++i)
 	{
-		output << p_values[i] << ',' << bottleneck_sizes[i];
+		output << p_values[i] << '\t' << bottleneck_sizes[i];
 		for (auto it = data; it != data + 3 * K; ++it)
 		{
-			output << ',' << (*it);
+			output << '\t' << (*it);
 		}
 		output << '\n';
 	}
