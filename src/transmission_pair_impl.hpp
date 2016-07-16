@@ -122,13 +122,10 @@ void transmission_pair_impl<T>::simulate_fixed(
 		vec_p_T[i] = p_i;
 	}
 
-	if (verbose)
-	{
-		std::cerr << "Transmitter\n" << std::fixed << std::setprecision(3);
-		std::copy(vec_p_T, vec_p_T + K,
-			std::ostream_iterator<double>(std::cerr, "  "));
-		std::cerr << '\n';
-	}
+	std::cerr << "Transmitter\n" << std::fixed << std::setprecision(3);
+	std::copy(vec_p_T, vec_p_T + K,
+		std::ostream_iterator<double>(std::cerr, "  "));
+	std::cerr << '\n';
 
 	double vec_p_R[K];
 	const double denom = f0 * p0 + (1 - p0);
@@ -138,32 +135,59 @@ void transmission_pair_impl<T>::simulate_fixed(
 		vec_p_R[i] = p_i / denom;
 	}
 
-	if (verbose)
+	std::cerr << "Recipient\n" << std::fixed << std::setprecision(3);
+	std::copy(vec_p_R, vec_p_R + K,
+		std::ostream_iterator<double>(std::cerr, "  "));
+	std::cerr << '\n';
+
+	const std::size_t num_elements_row_float = 1;
+	std::unique_ptr<double[]> vec_float(
+		new double[num_simulations * num_elements_row_float]);
+
+	const std::size_t num_elements_row_sample = 3 * K + 1;
+	std::unique_ptr<count_type[]> vec_sample(
+		new count_type[num_simulations * num_elements_row_sample]);
+
+#pragma omp parallel
 	{
-		std::cerr << "Recipient\n" << std::fixed << std::setprecision(3);
-		std::copy(vec_p_R, vec_p_R + K,
-			std::ostream_iterator<double>(std::cerr, "  "));
-		std::cerr << '\n';
-	}
+		int omp_seed = seed *
+#ifdef _OPENMP
+			(omp_get_thread_num() + 1)
+#else
+			1
+#endif
+			;
+		std::default_random_engine rng(omp_seed);
 
-	std::unique_ptr<double[]> p_values(new double[num_simulations]);
-	std::unique_ptr<int[]> bottleneck_sizes(new int[num_simulations]);
-	std::unique_ptr<count_type[]> data_vec(
-		new count_type[3 * K * num_simulations]);
+		double dist;
 
-	std::default_random_engine rng(seed);
-	double dist;
+#pragma omp for schedule(static, 10)
+		for (uint32_t i = 0; i < num_simulations; ++i)
+		{
+#ifndef NDEBUG
+#pragma omp critical
+			{
+				std::cerr << i << '\n';
+			}
+#endif
 
-	count_type* data = data_vec.get();
-	for (uint32_t i = 0; i < num_simulations; data += 3 * K, ++i)
-	{
-		bottleneck_sizes[i] = generate_transmission_sample(
-			K, vec_p_T, vec_p_R, data, data + K, data + 2 * K, transmitter_coverage,
-			recipient_coverage, lambda, rng);
-		dist = distance(K, data, data + 2 * K, transmitter_coverage,
-			recipient_coverage);
-		p_values[i] = perform_test(K, data, transmitter_coverage, recipient_coverage, dist,
-			lambda, num_trials, rng);
+			double* const float_offset = vec_float.get() + i * num_elements_row_float;
+
+			count_type* const sample_offset = vec_sample.get() + i * num_elements_row_sample;
+
+			count_type* const bottleneck_size = sample_offset + (0);
+			count_type* const vec_X_T = sample_offset + (1);
+			count_type* const vec_X_I = sample_offset + (1 + K);
+			count_type* const vec_X_R = sample_offset + (1 + 2 * K);
+
+			// generate samples
+			*bottleneck_size = generate_transmission_sample(
+				K, vec_p_T, vec_p_R, vec_X_T, vec_X_I, vec_X_R, transmitter_coverage,
+				recipient_coverage, lambda, rng);
+
+			dist = distance(K, vec_X_T, vec_X_R, transmitter_coverage, recipient_coverage);
+			float_offset[0] = perform_test(K, vec_X_T, transmitter_coverage, recipient_coverage, dist, lambda, num_trials, rng);
+		}
 	}
 
 	std::stringstream output_file_name;
@@ -173,22 +197,26 @@ void transmission_pair_impl<T>::simulate_fixed(
 	std::ofstream output(output_file_name.str());
 	output << "p\tB";
 
+	const char field_sep = '\t';
+
 	for (const auto& i : { "XT_", "XI_", "XR_" })
 	{
 		for (uint32_t j = 0; j < K; ++j)
 		{
-			output << '\t' << i << j;
+			output << field_sep << i << j;
 		}
 	}
 	output << '\n';
 
-	data = data_vec.get();
-	for (uint32_t i = 0; i < num_simulations; data += 3 * K, ++i)
+	const double* float_offset = vec_float.get();
+	const count_type* sample_offset = vec_sample.get();
+	output << std::setprecision(4);
+	for (uint32_t i = 0; i < num_simulations; float_offset += num_elements_row_float, sample_offset += num_elements_row_sample, ++i)
 	{
-		output << p_values[i] << '\t' << bottleneck_sizes[i];
-		for (auto it = data; it != data + 3 * K; ++it)
+		output << float_offset[0];
+		for (auto it = sample_offset; it != sample_offset + num_elements_row_sample; ++it)
 		{
-			output << '\t' << (*it);
+			output << field_sep << (*it);
 		}
 		output << '\n';
 	}
@@ -203,28 +231,21 @@ void transmission_pair_impl<T>::simulate_variable(
 	double vec_alpha[K];
 	std::fill(vec_alpha, vec_alpha + K, alpha);
 
-	if (verbose)
-	{
-		std::cerr << "alpha vector for Dirichlet\n" << std::fixed
-				  << std::setprecision(3);
-		std::copy(vec_alpha, vec_alpha + K,
-			std::ostream_iterator<double>(std::cerr, "  "));
-		std::cerr << '\n';
-	}
+	std::cerr << "alpha vector for Dirichlet\n" << std::fixed << std::setprecision(3);
+	std::copy(vec_alpha, vec_alpha + K, std::ostream_iterator<double>(std::cerr, "  "));
+	std::cerr << '\n';
 
 	const std::size_t num_elements_row_float = 2 * K + 1;
-	std::unique_ptr<double[]> vec_float(
-		new double[num_simulations * num_elements_row_float]);
+	std::unique_ptr<double[]> vec_float(new double[num_simulations * num_elements_row_float]);
 
 	const std::size_t num_elements_row_sample = 3 * K + 1;
-	std::unique_ptr<count_type[]> vec_sample(
-		new count_type[num_simulations * num_elements_row_sample]);
+	std::unique_ptr<count_type[]> vec_sample(new count_type[num_simulations * num_elements_row_sample]);
 
 #pragma omp parallel
 	{
 		int omp_seed = seed *
 #ifdef _OPENMP
-			omp_get_thread_num()
+			(omp_get_thread_num() + 1)
 #else
 			1
 #endif

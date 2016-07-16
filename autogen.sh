@@ -4,6 +4,9 @@ clean_files() {
 	echo "Cleaning bootstrapped files"
 
 	rm -rf .Rapp.history
+	rm -rf .RData
+	rm -rf .Rhistory
+
 	rm -rf .deps/
 	rm -rf .Tpo
 	rm -rf *.dSYM
