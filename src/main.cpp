@@ -35,7 +35,7 @@ enum class enum_run_mode
 
 int main(int argc, char* argv[])
 {
-	std::cout.imbue(std::locale("en_US.UTF-8"));
+	std::cerr.imbue(std::locale("en_US.UTF-8"));
 
 	// General configuration
 	double lambda;
@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
 		// show help options
 		if (global_options.count("help"))
 		{
-			std::cout << visible << '\n';
+			std::cerr << visible << '\n';
 			exit(EXIT_SUCCESS);
 		}
 
@@ -162,17 +162,14 @@ int main(int argc, char* argv[])
 	if (global_options.count("protein"))
 	{
 		data_type = enum_data_type::protein;
-		std::cout << "Running in protein mode\n";
 	}
 	else if (global_options.count("dna"))
 	{
 		data_type = enum_data_type::dna;
-		std::cout << "Running in DNA mode\n";
 	}
 	else
 	{
 		data_type = enum_data_type::trait;
-		std::cout << "Running in trait mode\n";
 	}
 
 	if (run_mode == enum_run_mode::simulate)
@@ -210,7 +207,24 @@ int main(int argc, char* argv[])
 	/* 3) show parameters */
 	if (verbose)
 	{
-		std::cout << std::setprecision(4)
+		std::cerr << "Running in ";
+		switch (data_type)
+		{
+			case enum_data_type::protein:
+				std::cerr << "protein";
+				break;
+
+			case enum_data_type::dna:
+				std::cerr << "DNA";
+				break;
+
+			case enum_data_type::trait:
+				std::cerr << "trait";
+				break;
+		}
+		std::cerr << " mode\n";
+
+		std::cerr << std::setprecision(4)
 				  << "  General parameters\n"
 				  << "\tLambda:                  " << lambda << " (mu = " << lambda_to_mean(lambda) << ")\n"
 				  << "\tNumber of trials:        " << num_trials << '\n'
@@ -221,7 +235,7 @@ int main(int argc, char* argv[])
 
 		if (run_mode == enum_run_mode::simulate)
 		{
-			std::cout
+			std::cerr
 				<< "  Simulation parameters\n"
 				<< "\tK:                       " << K << '\n'
 				<< "\tNumber of simulations:   " << num_simulations << '\n'
@@ -255,21 +269,21 @@ int main(int argc, char* argv[])
 	switch (run_mode)
 	{
 		case enum_run_mode::simulate:
-			std::cout << "Running ";
+			std::cerr << "Running ";
 			if (global_options.count("-s"))
 			{
-				std::cout << "fixed-population simulations\n";
+				std::cerr << "fixed-population simulations\n";
 				trans_pair->simulate_fixed(K, num_simulations, num_trials, transmitter_coverage, recipient_coverage, lambda, p0, f0, random_seed);
 			}
 			else
 			{
-				std::cout << "variable-population (alpha = " << alpha << ") simulations\n";
+				std::cerr << "variable-population (alpha = " << alpha << ") simulations\n";
 				trans_pair->simulate_variable(K, num_simulations, num_trials, transmitter_coverage, recipient_coverage, lambda, p0, f0, alpha, random_seed);
 			}
 			break;
 
 		case enum_run_mode::test:
-			std::cout << "Running statistical test\n";
+			std::cerr << "Running statistical test\n";
 			if (input_files.size())
 			{
 				// load files from vector
@@ -286,14 +300,16 @@ int main(int argc, char* argv[])
 					input.close();
 
 					const double pvalue = trans_pair->pvalue(num_trials, time, lambda, random_seed);
-					std::cout << i << " - p: " << pvalue << '\n';
+					std::cerr << i << " - p: ";
+					std::cout << pvalue << '\n';
 				}
 			}
 			else
 			{
 				trans_pair->init(std::cin, transmitter_regex, recipient_regex, true);
 				const double pvalue = trans_pair->pvalue(num_trials, time, lambda, random_seed);
-				std::cout << "p: " << pvalue << '\n';
+				std::cerr << "p: ";
+				std::cout << pvalue << '\n';
 			}
 			break;
 	}

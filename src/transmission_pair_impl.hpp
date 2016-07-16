@@ -44,34 +44,40 @@ void transmission_pair_impl<T>::init(std::istream& input_,
 	std::sort(transmitter_vec.begin(), transmitter_vec.end(), trait::compare);
 	std::sort(recipient_vec.begin(), recipient_vec.end(), trait::compare);
 
-	std::cout << "Input BEFORE initialization\n";
-	std::cout << "Transmitter:\n";
-	for (const auto& i : transmitter_vec)
+	if (verbose)
 	{
-		std::cout << i;
+		std::cerr << "Input BEFORE initialization\n";
+		std::cerr << "Transmitter:\n";
+		for (const auto& i : transmitter_vec)
+		{
+			std::cerr << i;
+		}
+		std::cerr << "\nRecipient:\n";
+		for (const auto& i : recipient_vec)
+		{
+			std::cerr << i;
+		}
+		std::cerr << '\n';
 	}
-	std::cout << "\nRecipient:\n";
-	for (const auto& i : recipient_vec)
-	{
-		std::cout << i;
-	}
-	std::cout << '\n';
 
 	// 3. initialize traits/sequences
 	init_(transmitter_vec, recipient_vec, retain_unshared_);
 
-	std::cout << "Input AFTER initialization\n";
-	std::cout << "Transmitter:\n";
-	for (const auto& i : m_transmitter_population)
+	if (verbose)
 	{
-		std::cout << i;
+		std::cerr << "Input AFTER initialization\n";
+		std::cerr << "Transmitter:\n";
+		for (const auto& i : m_transmitter_population)
+		{
+			std::cerr << i;
+		}
+		std::cerr << "\nRecipient:\n";
+		for (const auto& i : m_recipient_population)
+		{
+			std::cerr << i;
+		}
+		std::cerr << '\n';
 	}
-	std::cout << "\nRecipient:\n";
-	for (const auto& i : m_recipient_population)
-	{
-		std::cout << i;
-	}
-	std::cout << '\n';
 }
 
 /*
@@ -118,10 +124,10 @@ void transmission_pair_impl<T>::simulate_fixed(
 
 	if (verbose)
 	{
-		std::cout << "Transmitter\n" << std::fixed << std::setprecision(3);
+		std::cerr << "Transmitter\n" << std::fixed << std::setprecision(3);
 		std::copy(vec_p_T, vec_p_T + K,
-			std::ostream_iterator<double>(std::cout, "  "));
-		std::cout << '\n';
+			std::ostream_iterator<double>(std::cerr, "  "));
+		std::cerr << '\n';
 	}
 
 	double vec_p_R[K];
@@ -134,10 +140,10 @@ void transmission_pair_impl<T>::simulate_fixed(
 
 	if (verbose)
 	{
-		std::cout << "Recipient\n" << std::fixed << std::setprecision(3);
+		std::cerr << "Recipient\n" << std::fixed << std::setprecision(3);
 		std::copy(vec_p_R, vec_p_R + K,
-			std::ostream_iterator<double>(std::cout, "  "));
-		std::cout << '\n';
+			std::ostream_iterator<double>(std::cerr, "  "));
+		std::cerr << '\n';
 	}
 
 	std::unique_ptr<double[]> p_values(new double[num_simulations]);
@@ -199,11 +205,11 @@ void transmission_pair_impl<T>::simulate_variable(
 
 	if (verbose)
 	{
-		std::cout << "alpha vector for Dirichlet\n" << std::fixed
+		std::cerr << "alpha vector for Dirichlet\n" << std::fixed
 				  << std::setprecision(3);
 		std::copy(vec_alpha, vec_alpha + K,
-			std::ostream_iterator<double>(std::cout, "  "));
-		std::cout << '\n';
+			std::ostream_iterator<double>(std::cerr, "  "));
+		std::cerr << '\n';
 	}
 
 	const std::size_t num_elements_row_float = 2 * K + 1;
@@ -233,7 +239,7 @@ void transmission_pair_impl<T>::simulate_variable(
 #ifndef NDEBUG
 #pragma omp critical
 			{
-				std::cout << i << '\n';
+				std::cerr << i << '\n';
 			}
 #endif
 
@@ -398,10 +404,10 @@ void transmission_pair_impl<T>::init_(std::vector<T>& transmitter_vec,
 			{ my_pair("Retained", include_loci), my_pair("     Gap", gap_loci),
 				my_pair("Unshared", unshared_base_loci) })
 		{
-			std::cout << i.first << " loci: ";
+			std::cerr << i.first << " loci: ";
 			std::copy(i.second.begin(), i.second.end(),
-				std::ostream_iterator<std::size_t>(std::cout, " "));
-			std::cout << '\n';
+				std::ostream_iterator<std::size_t>(std::cerr, " "));
+			std::cerr << '\n';
 		}
 	}
 
@@ -462,22 +468,22 @@ void transmission_pair_impl<T>::init_(std::vector<T>& transmitter_vec,
 
 	if (verbose)
 	{
-		std::cout << "Transmitter Population: (Total: "
+		std::cerr << "Transmitter Population: (Total: "
 				  << m_transmitter_population.m_total_counts << ")\n";
 		int j = 0;
 		for (const auto& i : m_transmitter_population)
 		{
 			++j;
-			std::cout << i << '\n';
+			std::cerr << i << '\n';
 		}
 
-		std::cout << "\nRecipient Population: (Total: "
+		std::cerr << "\nRecipient Population: (Total: "
 				  << m_recipient_population.m_total_counts << ")\n";
 		j = 0;
 		for (const auto& i : m_recipient_population)
 		{
 			++j;
-			std::cout << i << '\n';
+			std::cerr << i << '\n';
 		}
 	}
 }

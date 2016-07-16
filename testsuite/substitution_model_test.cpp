@@ -6,6 +6,8 @@
 #include <iomanip>
 #include <cmath>
 
+bool verbose = true;
+
 #include "types.hpp"
 #include "substitution_model.hpp"
 
