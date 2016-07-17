@@ -25,7 +25,7 @@ AC_MSG_RESULT([${enable_flags_setting}])
 AX_CHECK_ENABLE_DEBUG
 AS_IF([test "x${enable_debug}" = "xno"],
 	[
-		cxxflags_test="-march=native -ffast-math -O3"
+		cxxflags_test="-O2"
 		cppflags_test=""
 
 		AC_CANONICAL_HOST
