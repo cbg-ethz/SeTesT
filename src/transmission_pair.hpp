@@ -3,15 +3,15 @@
 
 #include "defs.hpp"
 
-#include <vector>
 #include <memory>
-#include <type_traits>
-#include <string>
 #include <regex>
+#include <string>
+#include <type_traits>
+#include <vector>
 
-#include "types.hpp"
 #include "population.hpp"
 #include "substitution_model.hpp"
+#include "types.hpp"
 
 class transmission_pair
 {

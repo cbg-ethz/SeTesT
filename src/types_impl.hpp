@@ -1,9 +1,9 @@
 #ifndef TYPES_IMPL_HPP
 #define TYPES_IMPL_HPP
 
-#include <vector>
 #include <iostream>
 #include <limits>
+#include <vector>
 
 #include <boost/algorithm/string.hpp>
 
@@ -50,7 +50,8 @@ inline bool trait::operator<(const trait& b) const
 
 std::ostream& operator<<(std::ostream& output, const trait& trait_) noexcept
 {
-	return output << "Name:\t" << trait_.m_name << '\n' << "Count:\t"
+	return output << "Name:\t" << trait_.m_name << '\n'
+				  << "Count:\t"
 				  << trait_.m_count << '\n';
 }
 

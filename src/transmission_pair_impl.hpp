@@ -122,7 +122,8 @@ void transmission_pair_impl<T>::simulate_fixed(
 		vec_p_T[i] = p_i;
 	}
 
-	std::cerr << "Transmitter\n" << std::fixed << std::setprecision(3);
+	std::cerr << "Transmitter\n"
+			  << std::fixed << std::setprecision(3);
 	std::copy(vec_p_T, vec_p_T + K,
 		std::ostream_iterator<double>(std::cerr, "  "));
 	std::cerr << '\n';
@@ -135,7 +136,8 @@ void transmission_pair_impl<T>::simulate_fixed(
 		vec_p_R[i] = p_i / denom;
 	}
 
-	std::cerr << "Recipient\n" << std::fixed << std::setprecision(3);
+	std::cerr << "Recipient\n"
+			  << std::fixed << std::setprecision(3);
 	std::copy(vec_p_R, vec_p_R + K,
 		std::ostream_iterator<double>(std::cerr, "  "));
 	std::cerr << '\n';
@@ -231,7 +233,8 @@ void transmission_pair_impl<T>::simulate_variable(
 	double vec_alpha[K];
 	std::fill(vec_alpha, vec_alpha + K, alpha);
 
-	std::cerr << "alpha vector for Dirichlet\n" << std::fixed << std::setprecision(3);
+	std::cerr << "alpha vector for Dirichlet\n"
+			  << std::fixed << std::setprecision(3);
 	std::copy(vec_alpha, vec_alpha + K, std::ostream_iterator<double>(std::cerr, "  "));
 	std::cerr << '\n';
 
@@ -357,14 +360,13 @@ void transmission_pair_impl<T>::init_(std::vector<T>& transmitter_vec,
 {
 	// 1. extract valid loci
 	auto locus_extractor = [](const std::vector<T>& cont, std::set<char>& bases,
-		std::size_t pos) -> bool
-	{
+		std::size_t pos) -> bool {
 		bases.clear();
 		bool has_gap = false;
 
 		for (const auto& i : cont)
 		{
-			if (i.m_name[pos] == '-')
+			if ((i.m_name[pos] == '-') || (i.m_name[pos] == '*'))
 			{
 				has_gap = true;
 			}
@@ -374,7 +376,9 @@ void transmission_pair_impl<T>::init_(std::vector<T>& transmitter_vec,
 				{
 					std::cerr << "Sequence '" << i.m_name << "' contains invalid char '"
 							  << i.m_name[pos] << "' at position " << pos << "\n";
-					exit(EXIT_FAILURE);
+					std::cerr << "p: ";
+					std::cout << "NA\n";
+					exit(EXIT_SUCCESS);
 				}
 				bases.insert(i.m_name[pos]);
 			}
@@ -441,15 +445,16 @@ void transmission_pair_impl<T>::init_(std::vector<T>& transmitter_vec,
 					   ? ""
 					   : " or have any shared bases between transmitter and recipient")
 			<< ".\n";
-		exit(EXIT_FAILURE);
+		std::cerr << "p: ";
+		std::cout << "NA\n";
+		exit(EXIT_SUCCESS);
 	}
 
 	// 2. build final population
 	m_transmitter_population.swap(transmitter_vec);
 	m_recipient_population.swap(recipient_vec);
 
-	auto concatenate_seq = [&include_loci](population<T>& pop)
-	{
+	auto concatenate_seq = [&include_loci](population<T>& pop) {
 		std::map<std::string, T> pop_map;
 
 		std::string temp;
@@ -520,7 +525,9 @@ void transmission_pair_impl<trait>::init_(std::vector<trait>& transmitter_vec,
 	{
 		std::cerr
 			<< "ERROR: Recipient traits are not a subset of transmitter traits!\n";
-		exit(EXIT_FAILURE);
+		std::cerr << "p: ";
+		std::cout << "NA\n";
+		exit(EXIT_SUCCESS);
 	}
 
 	// 2. build new recipient vector
@@ -529,8 +536,7 @@ void transmission_pair_impl<trait>::init_(std::vector<trait>& transmitter_vec,
 	for (const auto& i : transmitter_vec)
 	{
 		const auto it = find_if(recipient_vec.cbegin(), recipient_vec.cend(),
-			[&i](const trait& val)
-			{
+			[&i](const trait& val) {
 				return val.m_name == i.m_name;
 			});
 		if (it == recipient_vec.cend())
@@ -549,8 +555,7 @@ void transmission_pair_impl<trait>::init_(std::vector<trait>& transmitter_vec,
 	m_transmitter_population.swap(transmitter_vec);
 	m_recipient_population.swap(new_rec_vec);
 
-	auto normalisation = [](population<trait>& pop)
-	{
+	auto normalisation = [](population<trait>& pop) {
 		count_type sum = 0;
 		for (const auto& j : pop)
 		{

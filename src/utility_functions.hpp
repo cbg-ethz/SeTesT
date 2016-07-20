@@ -22,9 +22,9 @@
  * USA.
  */
 
-#include <string>
 #include <array>
 #include <cmath>
+#include <string>
 
 template <typename T>
 inline std::string number_to_sequence(std::size_t number, int L)

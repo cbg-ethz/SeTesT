@@ -6,21 +6,21 @@
 #endif /* _OPENMP */
 
 #include <algorithm>
-#include <numeric>
-#include <vector>
+#include <cmath>
 #include <fstream>
 #include <iomanip>
-#include <cmath>
+#include <numeric>
 #include <string>
+#include <vector>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/numeric/odeint.hpp>
 
 template <std::size_t N>
-inline double calculate_average_substitution_rate(const double(&sub_mat)[N][N],
-	const double(&prob_vec)[N])
+inline double calculate_average_substitution_rate(const double (&sub_mat)[N][N],
+	const double (&prob_vec)[N])
 {
 	double rates[N][N];
 	double sum = 0, norm;
@@ -72,20 +72,21 @@ void substitution_model<T, log_space>::init(const std::string& file_stem)
 
 	if (!boost::filesystem::exists(rate_matrix_file_name))
 	{
-		std::cerr << "Cannot open rate matrix file!\n" << std::endl;
+		std::cerr << "Cannot open rate matrix file!\n"
+				  << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	const std::string stationary_distribution_file_name = file_stem + ".distribution";
 	if (!boost::filesystem::exists(stationary_distribution_file_name))
 	{
-		std::cerr << "Cannot open stationary distribution file!\n" << std::endl;
+		std::cerr << "Cannot open stationary distribution file!\n"
+				  << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	auto file_loader = [](const std::string& input_file, double matrix[][N],
-		const std::size_t matrix_rows)
-	{
+		const std::size_t matrix_rows) {
 		std::string temp;
 		std::ifstream input(input_file);
 		std::size_t real_row = 0, line_num = 0;
@@ -202,10 +203,10 @@ void substitution_model<T, log_space>::init(const std::string& file_stem)
 
 	auto display_matrix = [](const std::string& input_file,
 		const double matrix[][N],
-		const std::size_t matrix_rows)
-	{
+		const std::size_t matrix_rows) {
 		std::cerr << (matrix_rows == 1 ? "Vector" : "Matrix") << " from '"
-				  << input_file << "':\n" << std::fixed << std::setprecision(4);
+				  << input_file << "':\n"
+				  << std::fixed << std::setprecision(4);
 		for (std::size_t i = 0; i < matrix_rows; ++i)
 		{
 			for (std::size_t j = 0; j < N; ++j)
@@ -534,8 +535,7 @@ double substitution_model<T, log_space>::weighted_distance(
 		transmitter_population.size());
 	std::transform(weighted_counts.cbegin(), weighted_counts.cend(),
 		rounded_weighted_counts.begin(),
-		[&int_sum](const double d) -> count_type
-		{
+		[&int_sum](const double d) -> count_type {
 			count_type result = std::round(d);
 			int_sum += result;
 			return result;
@@ -607,7 +607,8 @@ void substitution_model<T, log_space>::display(double time,
 	get_entry_impl(T::index_to_elem(0), T::index_to_elem(0), time);
 
 	std::cerr << "Transition " << (log_space == true ? "(logarithmic) " : "")
-			  << "tables for t = " << time << '\n' << std::fixed
+			  << "tables for t = " << time << '\n'
+			  << std::fixed
 			  << std::setprecision(3);
 	double sum, average_sub_rate = 0;
 	char from_elem, to_elem;
@@ -630,7 +631,8 @@ void substitution_model<T, log_space>::display(double time,
 
 		average_sub_rate -= P_marginal_base(from_elem) * P_from_to_base(from_elem, from_elem, time);
 
-		std::cerr << '\n' << std::setw(4) << std::right << "sum"
+		std::cerr << '\n'
+				  << std::setw(4) << std::right << "sum"
 				  << ": " << sum << "\n\n";
 	}
 
@@ -684,8 +686,7 @@ double substitution_model<T, log_space>::get_entry_impl(char from_base,
 		// 3. right-hand side of ODE
 		auto rhs = [&rates](const std::array<double, N * N>& p,
 			std::array<double, N * N>& dpdt,
-			const double t) -> void
-		{
+			const double t) -> void {
 			// std::cerr << t << '\n';
 
 			for (std::size_t block = 0; block < N; ++block)

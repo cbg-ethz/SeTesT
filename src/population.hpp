@@ -3,12 +3,12 @@
 
 #include "defs.hpp"
 
-#include <vector>
-#include <memory>
-#include <type_traits>
-#include <string>
 #include <iostream>
+#include <memory>
 #include <random>
+#include <string>
+#include <type_traits>
+#include <vector>
 
 #include "substitution_model.hpp"
 #include "types.hpp"
@@ -49,8 +49,7 @@ public:
 		const population& population_) noexcept
 	{
 		std::for_each(population_.cbegin(), population_.cend(),
-			[&output](const T& val)
-			{
+			[&output](const T& val) {
 				output << val << '\n';
 			});
 		return output;

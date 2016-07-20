@@ -4,12 +4,12 @@
 #include "defs.hpp"
 
 #include <array>
-#include <string>
 #include <functional>
+#include <string>
 #include <utility>
 
-#include "types.hpp"
 #include "population.hpp"
+#include "types.hpp"
 
 template <typename T, bool log_space = true>
 class substitution_model

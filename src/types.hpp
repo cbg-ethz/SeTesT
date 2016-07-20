@@ -3,8 +3,8 @@
 
 #include "defs.hpp"
 
-#include <memory>
 #include <array>
+#include <memory>
 #include <string>
 #include <type_traits>
 

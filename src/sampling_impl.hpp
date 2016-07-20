@@ -1,15 +1,15 @@
 #ifndef SAMPLING_IMPL_HPP
 #define SAMPLING_IMPL_HPP
 
-#include <cstdlib>
 #include <algorithm>
-#include <numeric>
 #include <cassert>
 #include <cmath>
-#include <random>
-#include <iterator>
-#include <iostream>
+#include <cstdlib>
 #include <fstream>
+#include <iostream>
+#include <iterator>
+#include <numeric>
+#include <random>
 #include <utility>
 
 #include <boost/math/tools/roots.hpp>
@@ -30,10 +30,9 @@ double mean_to_lambda(double mu)
 {
 	boost::uintmax_t max_iter = 1000;
 
-	auto result = boost::math::tools::toms748_solve([mu](double lambda)
-		{
-			return (mu - lambda / (1 - std::exp(-lambda)));
-		},
+	auto result = boost::math::tools::toms748_solve([mu](double lambda) {
+		return (mu - lambda / (1 - std::exp(-lambda)));
+	},
 		1E-5, 1E5, boost::math::tools::eps_tolerance<double>(30), max_iter);
 
 	return (result.first + result.second) / 2;
@@ -96,8 +95,7 @@ void gen_rand_dirichlet(const double* input_begin_iter,
 
 	// 1. first sample from gamma distribution
 	double* output_end_iter = std::transform(input_begin_iter, input_end_iter, output_begin_iter,
-		[&sum, &rng](const double& val) -> double
-		{
+		[&sum, &rng](const double& val) -> double {
 			assert(val > 0);
 
 			double x = std::gamma_distribution<>(val, 1.0)(rng);
@@ -107,8 +105,7 @@ void gen_rand_dirichlet(const double* input_begin_iter,
 
 	// 2. then normalize the vector
 	std::for_each(output_begin_iter, output_end_iter,
-		[&sum](double& val)
-		{
+		[&sum](double& val) {
 			val /= sum;
 		});
 }
@@ -125,8 +122,7 @@ void gen_rand_multinomial(InputIt input_begin_iter, InputIt input_end_iter,
 	if (!sum)
 	{
 		sum = std::accumulate(input_begin_iter, input_end_iter, 0.0,
-			[visitor](double d, const input_type& val)
-			{
+			[visitor](double d, const input_type& val) {
 				return d + visitor(val);
 			});
 	}
@@ -135,8 +131,7 @@ void gen_rand_multinomial(InputIt input_begin_iter, InputIt input_end_iter,
 	// std::cerr << "Initial   N: " << N << '\n';
 
 	OutputIt output_end_iter = std::transform(input_begin_iter, input_end_iter - 1, output_begin_iter,
-		[&](const input_type& val) -> count_type
-		{
+		[&](const input_type& val) -> count_type {
 			// std::cerr << "sum: " << sum << '\n';
 
 			assert(sum >= 0);
@@ -296,8 +291,7 @@ double perform_test(uint32_t K, InputIt T_iter, count_type T_total,
 
 	double p_T_MLE[K];
 	std::transform(T_iter, T_iter + K, p_T_MLE,
-		[T_total, visitor](const input_type& val) -> double
-		{
+		[T_total, visitor](const input_type& val) -> double {
 			return visitor(val) / static_cast<double>(T_total);
 		});
 

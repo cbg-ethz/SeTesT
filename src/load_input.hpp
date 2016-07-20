@@ -1,8 +1,8 @@
 #ifndef FASTA_HPP
 #define FASTA_HPP
 
-#include <cctype>
 #include <algorithm>
+#include <cctype>
 #include <exception>
 #include <fstream>
 #include <iostream>
@@ -21,8 +21,7 @@ void load_input(std::istream& input, std::vector<T>& transmitter_vec,
 	std::string id, seq, temp;
 	uint32_t last_line = 1, line_num = 0;
 
-	auto add_to_vec = [&](const std::string& id, std::string&& seq)
-	{
+	auto add_to_vec = [&](const std::string& id, std::string&& seq) {
 		std::vector<std::string> split_vec;
 		boost::split(split_vec, id, boost::is_any_of("_"),
 			boost::token_compress_on);
@@ -175,7 +174,7 @@ void load_input(std::istream& input, std::vector<trait>& transmitter_vec,
 				exit(EXIT_FAILURE);
 			}
 
-			const int result = 2 * std::regex_match(split_vec[0], transmitter_regex) + 1 * std::regex_match(split_vec[0], recipient_regex);
+			const int result = 2 * std::regex_search(split_vec[0], transmitter_regex) + 1 * std::regex_search(split_vec[0], recipient_regex);
 
 			switch (result)
 			{

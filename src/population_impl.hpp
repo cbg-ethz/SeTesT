@@ -2,9 +2,9 @@
 #define POPULATION_IMPL_HPP
 
 #include <algorithm>
-#include <numeric>
 #include <cassert>
 #include <cmath>
+#include <numeric>
 #include <random>
 
 #include <boost/math/tools/roots.hpp>
@@ -35,8 +35,7 @@ population<T>::population(const std::vector<T>& vec_)
 	: std::vector<T>(vec_),
 	  m_total_counts(std::accumulate(
 		  this->cbegin(), this->cend(), 0ul,
-		  [](count_type A, const T& B)
-		  {
+		  [](count_type A, const T& B) {
 			  return A + B.m_count;
 		  })){};
 
@@ -45,8 +44,7 @@ population<T>::population(std::vector<T>&& vec_)
 	: std::vector<T>(std::move(vec_)),
 	  m_total_counts(std::accumulate(
 		  this->cbegin(), this->cend(), 0ul,
-		  [](count_type A, const T& B)
-		  {
+		  [](count_type A, const T& B) {
 			  return A + B.m_count;
 		  })){};
 
