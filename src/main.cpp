@@ -1,9 +1,9 @@
 #include <config.h>
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <thread>
-#include <memory>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -28,10 +28,10 @@ enum class enum_run_mode
 	test
 };
 
-#include "substitution_model.hpp"
 #include "population.hpp"
-#include "types.hpp"
+#include "substitution_model.hpp"
 #include "transmission_pair.hpp"
+#include "types.hpp"
 
 int main(int argc, char* argv[])
 {

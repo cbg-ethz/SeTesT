@@ -2,15 +2,15 @@
 
 #undef NDEBUG
 
-#include <iostream>
-#include <iomanip>
 #include <cmath>
 #include <cstdlib>
+#include <iomanip>
+#include <iostream>
 
 bool verbose = true;
 
-#include "types.hpp"
 #include "substitution_model.hpp"
+#include "types.hpp"
 #include "utility_functions.hpp"
 
 int main(int argc, char* argv[])

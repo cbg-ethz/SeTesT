@@ -27,7 +27,7 @@ trait& trait::operator=(trait&& other) = default;
 
 template <typename T,
 	typename std::enable_if<std::is_integral<typename std::remove_reference<T>::type>::value,
-			  int>::type>
+		int>::type>
 trait& trait::operator=(T&& count_)
 {
 	m_count = count_;

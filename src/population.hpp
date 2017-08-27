@@ -10,7 +10,6 @@
 #include <type_traits>
 #include <vector>
 
-#include "substitution_model.hpp"
 #include "types.hpp"
 
 template <typename T>
