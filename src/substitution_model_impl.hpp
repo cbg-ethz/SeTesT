@@ -247,7 +247,7 @@ substitution_model<T, log_space>::substitution_model(std::string file_stem,
 	if (file_stem.empty())
 	{
 		constexpr std::array<const char*, 2> lookup_directories{
-			{ "data", DATA_PATH }
+			{ DATA_PATH, "data" }
 		};
 
 		constexpr const char* prefix = (std::is_same<T, protein_sequence>::value ? "amino_acid" : "dna");

@@ -11,8 +11,8 @@ clean_files() {
 	rm -rf .Tpo
 	rm -rf *.dSYM
 	rm -rf setest
-	rm -rf setest-0.1.tar.bz2
-	rm -rf setest-0.1/
+	rm -rf setest-*.tar.bz2
+	rm -rf setest-*/
 
 	# Autotools
 	rm -rf Makefile
@@ -27,22 +27,23 @@ clean_files() {
 	rm -rf missing
 	rm -rf stamp-h1
 	rm -rf test-driver
-	
+	rm -rf *.log
+
 	# source
 	rm -rf src/*.o
 	rm -rf src/.deps
 	rm -rf src/.dirstamp
-	
+
 	# testsuite
-	rm -rf *.log
-	rm -rf *.trs
-	rm -rf sequence_compile_test
-	rm -rf substitution_model_test
-	rm -rf substitution_model_sequence_space_test
+	rm -rf testsuite/*.log
+	rm -rf testsuite/*.trs
+	rm -rf testsuite/sequence_compile_test
+	rm -rf testsuite/substitution_model_test
+	rm -rf testsuite/substitution_model_sequence_space_test
 	rm -rf testsuite/*.o
 	rm -rf testsuite/.deps
 	rm -rf testsuite/.dirstamp
-	
+
 	# OS X cruft
 	find . -name '.DS_Store' -type f -delete
 }

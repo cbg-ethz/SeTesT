@@ -17,7 +17,6 @@ setest_SOURCES = \
 	src/utility_functions.hpp \
 	src/main.cpp
 
-	
 setest_LDADD = \
 	$(BOOST_LDFLAGS) $(BOOST_PROGRAM_OPTIONS_LIB) $(BOOST_FILESYSTEM_LIB) $(BOOST_SYSTEM_LIB)
 
@@ -39,14 +38,14 @@ dist_pkgdata_DATA = \
 # CHECKS
 TESTS = $(check_PROGRAMS)
 check_PROGRAMS = \
-	sequence_compile_test \
-	substitution_model_test \
-	substitution_model_sequence_space_test
+	testsuite/sequence_compile_test \
+	testsuite/substitution_model_test \
+	testsuite/substitution_model_sequence_space_test
 
-sequence_compile_test_SOURCES = testsuite/sequence_compile_test.cpp
+testsuite_sequence_compile_test_SOURCES = testsuite/sequence_compile_test.cpp
 
-substitution_model_test_SOURCES = testsuite/substitution_model_test.cpp
-substitution_model_test_LDADD = $(BOOST_LDFLAGS) $(BOOST_FILESYSTEM_LIB) $(BOOST_SYSTEM_LIB)
+testsuite_substitution_model_test_SOURCES = testsuite/substitution_model_test.cpp
+testsuite_substitution_model_test_LDADD = $(BOOST_LDFLAGS) $(BOOST_FILESYSTEM_LIB) $(BOOST_SYSTEM_LIB)
 
-substitution_model_sequence_space_test_SOURCES = testsuite/substitution_model_sequence_space_test.cpp
-substitution_model_sequence_space_test_LDADD = $(BOOST_LDFLAGS) $(BOOST_FILESYSTEM_LIB) $(BOOST_SYSTEM_LIB)
+testsuite_substitution_model_sequence_space_test_SOURCES = testsuite/substitution_model_sequence_space_test.cpp
+testsuite_substitution_model_sequence_space_test_LDADD = $(BOOST_LDFLAGS) $(BOOST_FILESYSTEM_LIB) $(BOOST_SYSTEM_LIB)
