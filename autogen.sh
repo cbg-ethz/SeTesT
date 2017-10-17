@@ -20,7 +20,7 @@ clean_files() {
 	rm -rf aclocal.m4
 	rm -rf autom4te.cache/
 	rm -rf compile
-	rm -rf config.*
+	rm -rf config.h*
 	rm -rf configure
 	rm -rf depcomp
 	rm -rf install-sh

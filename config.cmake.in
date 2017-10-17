@@ -1,0 +1,8 @@
+#cmakedefine PROJECT_NAME
+#cmakedefine PROJECT_VERSION
+#cmakedefine CMAKE_INSTALL_FULL_DATADIR
+
+/* Map CMake variables to Autoconf variables */
+#define PACKAGE_NAME PROJECT_NAME
+#define PACKAGE_VERSION PROJECT_VERSION
+#define DATA_PATH CMAKE_INSTALL_FULL_DATADIR "/" PACKAGE_NAME
